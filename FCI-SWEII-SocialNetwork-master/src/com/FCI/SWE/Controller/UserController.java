@@ -44,7 +44,6 @@ import com.google.api.server.spi.BackendService.Properties;
 @Produces("text/html")
 public class UserController {
 
-	 
 	/**
 	 * Action function to render Signup page, this function will be executed
 	 * using url like this /rest/signup
@@ -56,15 +55,7 @@ public class UserController {
 	public Response signUp() {
 		return Response.ok(new Viewable("/jsp/register")).build();
 	}
-	@GET
-	@Path("/Logout")
-	public Response signOut() {
-		UserEntity user = null ;
-		JSONObject object = new JSONObject() ;
-		object.put("Status", "Failed");
-		return Response.ok(new Viewable("/jsp/login")).build();
-	}
-	 
+
 	/**
 	 * Action function to render home page of application, home page contains
 	 * only signup and login buttons
@@ -86,9 +77,9 @@ public class UserController {
 	@GET
 	@Path("/login")
 	public Response login() {
-		//UserEntity user = null; 
 		return Response.ok(new Viewable("/jsp/login")).build();
 	}
+
 	@GET
 	@Path("/userspage")
 	public Response userspage() {
@@ -114,7 +105,7 @@ public class UserController {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String response(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
-		String serviceUrl = "http://localhost:8888/rest/RegistrationService";
+		String serviceUrl = "http://javafcirestfuljerseytestsocial.appspot.com/rest/RegistrationService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&email=" + email
@@ -157,7 +148,7 @@ public class UserController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
+
 		return "Failed";
 	}
 
@@ -178,15 +169,8 @@ public class UserController {
 	@Produces("text/html")
 	public Response home(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
-		
-		KeepUserName out = new KeepUserName();
-		if(out.getUserName() != uname){
-			    uname = null ;
-			    JSONObject object = new JSONObject() ;
-				object.put("Status", "Failed");
-			     pass= null; 
-		}
-		String serviceUrl = "http://localhost:8888/rest/LoginService";
+
+		String serviceUrl = "http://javafcirestfuljerseytestsocial.appspot.com/rest/LoginService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&password=" + pass;
@@ -220,22 +204,22 @@ public class UserController {
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
 				return null;
-			//Map< Integer , String> map = new HashMap<Integer , String>();
-			Map< String , Integer> map = new HashMap<String, Integer>();
-			
+			// Map< Integer , String> map = new HashMap<Integer , String>();
+			Map<String, Integer> map = new HashMap<String, Integer>();
+
 			UserEntity user = UserEntity.getUser(object.toJSONString());
-			ArrayList<UserEntity>requistList = new ArrayList<UserEntity> ();
+			ArrayList<UserEntity> requistList = new ArrayList<UserEntity>();
 			requistList.add(user);
 			requistList.addAll(user.searchForReq(uname));
-			
-			int size = requistList.size()-1;
+
+			int size = requistList.size() - 1;
 			map.put("uname", size);
-			
-			//for (int i = 1 ; i < requistList.size(); i++){
-				//map.put(i, requistList.get(i).getName());
-		//	}
-			
-			return Response.ok(new Viewable("/jsp/home", map )).build();
+
+			// for (int i = 1 ; i < requistList.size(); i++){
+			// map.put(i, requistList.get(i).getName());
+			// }
+
+			return Response.ok(new Viewable("/jsp/home", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -259,7 +243,7 @@ public class UserController {
 	@Produces("text/html")
 	public Response users(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
-		String serviceUrl = "http://localhost:8888/rest/UserspageService";
+		String serviceUrl = "http://javafcirestfuljerseytestsocial.appspot.com/rest/UserspageService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&password=" + pass;
@@ -282,7 +266,7 @@ public class UserController {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
 
-			while ((line = reader.readLine()) != null){
+			while ((line = reader.readLine()) != null) {
 				retJson += line;
 			}
 			writer.close();
@@ -292,19 +276,19 @@ public class UserController {
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
 				return null;
-			
+
 			Map<String, String> map = new HashMap<String, String>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
 			map.put("name", user.getName());
 			map.put("email", user.getEmail());
 			KeepUserName n = new KeepUserName();
 			String s = n.getUserName();
-			
-			//serv.getUserName();
+
+			// serv.getUserName();
 			// System.out.println("good man : "+s);
-			 
-			user.saveUser2(s,"0");
-			user.saveFriend(user.getName(),"users");
+
+			user.saveUser2(s, "0");
+			user.saveFriend(user.getName(), "users");
 			return Response.ok(new Viewable("/jsp/userspage", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block

@@ -1,38 +1,11 @@
 package com.FCI.SWE.Services;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.server.mvc.Viewable;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.FCI.SWE.Controller.UserController;
-import com.FCI.SWE.Models.KeepUserName;
 import com.FCI.SWE.Models.UserEntity;
-
 
 /**
  * This class contains REST services, also contains action function for web
@@ -45,14 +18,15 @@ import com.FCI.SWE.Models.UserEntity;
 @Path("/")
 @Produces("text/html")
 public class Service {
-	
-	/*@GET
-	@Path("/index")
-	public Response index() {
-		return Response.ok(new Viewable("/jsp/entryPoint")).build();
-	}*/
-	
-		/**
+
+	/*
+	 * @GET
+	 * 
+	 * @Path("/index") public Response index() { return Response.ok(new
+	 * Viewable("/jsp/entryPoint")).build(); }
+	 */
+
+	/**
 	 * Registration Rest service, this service will be called to make
 	 * registration. This function will store user data in data store
 	 * 
@@ -68,42 +42,39 @@ public class Service {
 	@Path("/RegistrationService")
 	public String registrationService(@FormParam("uname") String uname,
 			@FormParam("email") String email, @FormParam("password") String pass) {
-		 
+
 		UserEntity user = new UserEntity(uname, email, pass);
 		user.saveUser();
 		JSONObject object = new JSONObject();
 		object.put("Status", "OK");
-		
+
 		return object.toString();
 	}
 
 	/**
 	 * Login Rest Service, this service will be called to make login process
 	 * also will check user data and returns new user from datastore
-	 * @param uname provided user name
-	 * @param pass provided user password
+	 * 
+	 * @param uname
+	 *            provided user name
+	 * @param pass
+	 *            provided user password
 	 * @return user in json format
 	 */
 	@POST
 	@Path("/LoginService")
 	public String loginService(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
- 			
-		KeepUserName me = new KeepUserName(uname);
-	
-		JSONObject object = new JSONObject() ;
-		UserEntity user = UserEntity.getUser( uname , pass ) ;
-		if (uname != me.getUserName()){
-			user = null;
-			object.put("Status", "Failed");
-		}
-		
-		
+
+		JSONObject object = new JSONObject();
+		UserEntity user = UserEntity.getUser(uname, pass);
 		if (user == null) {
-			
+
 			object.put("Status", "Failed");
+			System.out.println("kkkkkkkkkkkkkkkkk");
 
 		} else {
+			System.out.println("mmmmmmmmmmmmm");
 			object.put("Status", "OK");
 			object.put("name", user.getName());
 			object.put("email", user.getEmail());
@@ -111,35 +82,21 @@ public class Service {
 		}
 		return object.toString();
 	}
- 
-	public void getUserName(HttpServletRequest request,HttpServletResponse response) throws IOException{
-	
-		//response.setContentType("text/login");
-		PrintWriter writer = response.getWriter();
-		String userName = request.getParameter("name");
-		System.out.println("i am in getUsename :- " + userName);
-		HttpSession session = request.getSession();
-		if (userName != "" && userName != null){
-			session.setAttribute("savedUserName", userName);	
-		}
-		System.out.println("i am in getUsename :- " + userName);
-		
-	}
+
 	@POST
 	@Path("/UserspageService")
-	
 	public String userService(@FormParam("uname") String uname,
-				@FormParam("password") String pass) {
-			JSONObject object = new JSONObject() ;
-			UserEntity user = UserEntity.getUserOnly( uname  ) ;
-			if (user == null) {
-				object.put("Status", "Failed");
-			}else {
-				object.put("Status", "OK");
-				object.put("name", user.getName());
-				object.put("email", user.getEmail());
-				object.put("password", user.getPass());
-			}
-			return object.toString();
+			@FormParam("password") String pass) {
+		JSONObject object = new JSONObject();
+		UserEntity user = UserEntity.getUserOnly(uname);
+		if (user == null) {
+			object.put("Status", "Failed");
+		} else {
+			object.put("Status", "OK");
+			object.put("name", user.getName());
+			object.put("email", user.getEmail());
+			object.put("password", user.getPass());
+		}
+		return object.toString();
 	}
 }
