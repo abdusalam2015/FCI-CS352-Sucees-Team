@@ -99,7 +99,6 @@ public class UserController {
 	 *            provided user password
 	 * @return Status string
 	 */
-
 	@POST
 	@Path("/response")
 	@Produces(MediaType.TEXT_PLAIN)

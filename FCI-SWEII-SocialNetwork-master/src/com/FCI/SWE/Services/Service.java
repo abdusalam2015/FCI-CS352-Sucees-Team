@@ -38,6 +38,7 @@ public class Service {
 	 *            provided password
 	 * @return Status json
 	 */
+	
 	@POST
 	@Path("/RegistrationService")
 	public String registrationService(@FormParam("uname") String uname,
@@ -69,12 +70,9 @@ public class Service {
 		JSONObject object = new JSONObject();
 		UserEntity user = UserEntity.getUser(uname, pass);
 		if (user == null) {
-
 			object.put("Status", "Failed");
-			System.out.println("kkkkkkkkkkkkkkkkk");
 
 		} else {
-			System.out.println("mmmmmmmmmmmmm");
 			object.put("Status", "OK");
 			object.put("name", user.getName());
 			object.put("email", user.getEmail());
