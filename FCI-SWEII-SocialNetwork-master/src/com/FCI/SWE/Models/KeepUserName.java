@@ -21,13 +21,13 @@ public class KeepUserName {
 	public KeepUserName(){
 		
 	}
-	public static  String userName ; 
+	public static String userName ; 
 	public KeepUserName(String name){
-		String s = name ; 
-		userName  = s ; 
+	 
+		userName  = name ; 
 		
 	}
-	public String   getUserName(){
+	public static String   getUserName(){
 		return userName ; 
 	}
 	
