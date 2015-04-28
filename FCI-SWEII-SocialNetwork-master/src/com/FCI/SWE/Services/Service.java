@@ -135,8 +135,10 @@ public class Service {
 		System.out.println("message  : "+message);
 		
 		if(groupName.equals(null) && memmber.equals(null) && message.equals(null) ){
+		//	user2.createGroupMessage(groupName, admin.getUserName(), message);
+			System.out.println("34343434343434343434343");
 			object.put("Status", "OK");
-		}else if(group==null){
+		}else if(group == null){
 			System.out.println("tr1");
 			user2.createGroupMessage(groupName, admin.getUserName(), message);//create group only
 				System.out.println("tr34");

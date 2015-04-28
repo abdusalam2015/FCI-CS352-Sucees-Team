@@ -150,6 +150,43 @@ public class UserEntity {
 		return null;
 	}
 
+	public static ArrayList<UserEntity> getGroupMessages(String userName) {// AA
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("conversations");
+
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+
+		System.out.println("islam");
+		String str = "";
+		ArrayList<UserEntity> messageList = new ArrayList<>();
+		for (Entity entity : pq.asIterable()) {
+			System.out.println("islam1");
+			if (entity.getProperty("memmbers").toString().equals(userName)
+					|| entity.getProperty("sender").toString().equals(userName)) {
+				str = entity.getProperty("groupName").toString();
+				System.out.println("islam2");
+
+				for (Entity entity2 : pq.asIterable()) {
+					if (str.equals(entity2.getProperty("groupName").toString())) {
+						UserEntity returnedUser = new UserEntity(entity2
+								.getProperty("message").toString(), entity2
+								.getProperty("sender").toString(), entity2
+								.getProperty("groupName").toString());
+						messageList.add(returnedUser);
+						System.out.println("islam3" + messageList);
+
+					}
+					break;
+
+				}
+			}
+		}
+
+		return messageList;
+	}
+
 	public static ArrayList<UserEntity> searchForReq(String name) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -176,7 +213,7 @@ public class UserEntity {
 		return requestList;
 	}
 
-	public static ArrayList<UserEntity> getMessages(String userName ) {// AA
+	public static ArrayList<UserEntity> getMessages(String userName) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -188,7 +225,7 @@ public class UserEntity {
 		ArrayList<UserEntity> messageList = new ArrayList<>();
 
 		for (Entity entity : pq.asIterable()) {
-			if (entity.getProperty("receiver").toString().equals(userName)  ) {
+			if (entity.getProperty("receiver").toString().equals(userName)) {
 
 				returnedUser = new UserEntity(entity.getProperty("message")
 						.toString(), entity.getProperty("receiver").toString(),
@@ -200,34 +237,43 @@ public class UserEntity {
 		}
 		return messageList;
 	}
-	public static ArrayList<UserEntity> getGroupMessages (String userName  ) {// AA
+
+	public static ArrayList<UserEntity> getconversations(String userName) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		Query gaeQuery = new Query("groupMessages");
-		
-		PreparedQuery pq = datastore.prepare(gaeQuery);
-	 
-		UserEntity returnedUser = null ;
+		Query gaeQuery = new Query("conversations");
 
-		ArrayList<UserEntity> messageList = new ArrayList<>( );
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+
+		UserEntity returnedUser = null;
+
+		ArrayList<UserEntity> messageList = new ArrayList<>();
+
 		for (Entity entity : pq.asIterable()) {
-		 
-			if (entity.getProperty("memmbers").toString().equals(userName) ||
-					entity.getProperty("sender").toString().equals(userName) ) {
-				 
-				returnedUser = new UserEntity(entity.getProperty("message")
-						.toString(), entity.getProperty("sender").toString(),
-						entity.getProperty("groupName").toString());
-				System.out.println("GMs  :-" + returnedUser.getName());
-				messageList.add(returnedUser);
-				
+
+			if (entity.getProperty("memmbers").toString().equals(userName)
+					|| entity.getProperty("sender").toString().equals(userName)) {
+				String str = entity.getProperty("groupName").toString();
+				for (Entity entity2 : pq.asIterable()) {
+					returnedUser = new UserEntity(entity2
+							.getProperty("message").toString(), entity2
+							.getProperty("sender").toString(), entity2
+							.getProperty("groupName").toString());
+
+					messageList.add(returnedUser);
+
+				}
+				break;
+
 			}
 		}
-		System.out.println("GMs2 :-" + returnedUser.getName());
+
 		return messageList;
 	}
-	public static ArrayList<UserEntity> getSpecificMessages(String  userName , String name) {// AA
+
+	public static ArrayList<UserEntity> getSpecificMessages(String userName,
+			String name) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -237,12 +283,12 @@ public class UserEntity {
 		UserEntity returnedUser = null;
 
 		ArrayList<UserEntity> messageList = new ArrayList<>();
-		
+
 		for (Entity entity : pq.asIterable()) {
-			if (entity.getProperty("receiver").toString().equals(userName) && 
-					entity.getProperty("sender").toString().equals(name) || 
-					entity.getProperty("receiver").toString().equals(name) && 
-					entity.getProperty("sender").toString().equals(userName)) {
+			if (entity.getProperty("receiver").toString().equals(userName)
+					&& entity.getProperty("sender").toString().equals(name)
+					|| entity.getProperty("receiver").toString().equals(name)
+					&& entity.getProperty("sender").toString().equals(userName)) {
 
 				returnedUser = new UserEntity(entity.getProperty("message")
 						.toString(), entity.getProperty("receiver").toString(),
@@ -253,6 +299,56 @@ public class UserEntity {
 			}
 		}
 		return messageList;
+	}
+
+	public static ArrayList<UserEntity> getNotificationGMSG(String userName) {// AA
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("conversations");
+
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		UserEntity returnedUser = null;
+
+		ArrayList<UserEntity> conversationList = new ArrayList<>();
+		ArrayList<UserEntity> newConversationList = new ArrayList<>();
+		HashSet<String> mySet = new HashSet<>();
+
+		for (Entity entity : pq.asIterable()) {
+
+			if (entity.getProperty("memmbers").toString().equals(userName)
+					|| entity.getProperty("sender").toString().equals(userName)) {
+
+				returnedUser = new UserEntity(entity.getProperty("groupName")
+						.toString(), entity.getProperty("message").toString(),
+						entity.getProperty("sender").toString());
+
+				System.out.println("mmmge  :-" + returnedUser.getName());
+
+				mySet.add(entity.getProperty("groupName").toString());
+				conversationList.add(returnedUser);
+
+			}
+		}
+
+		int counter = 0;
+		for (String gName : mySet) {
+			System.out.println("tomoro2 :" + gName);
+
+			for (int i = 0; i < conversationList.size(); i++) {
+
+				System.out.println("tomoro :"
+						+ conversationList.get(i).getName());
+				if (conversationList.get(i).getName().equals(gName)) {
+					counter++;
+				}
+			}
+			String messageNumber = counter + "";
+			System.out.println("str : " + messageNumber + "int: " + counter);
+			newConversationList.add(new UserEntity(gName, messageNumber, ""));
+			counter = 0;
+		}
+		return newConversationList;
 	}
 
 	public static ArrayList<UserEntity> getSenderMessages(String userName) {// AA
@@ -279,22 +375,22 @@ public class UserEntity {
 
 			}
 		}
-		 
+
 		int counter = 0;
 		for (String senderName : mySet) {
-			System.out.println("tomoro2 :"+senderName );
-			
+			System.out.println("tomoro2 :" + senderName);
+
 			for (int i = 0; i < messageList.size(); i++) {
-				
-				System.out.println("tomoro :"+messageList.get(i).getName() );
+
+				System.out.println("tomoro :" + messageList.get(i).getName());
 				if (messageList.get(i).getName().equals(senderName)) {
 					counter++;
 				}
 			}
-			String messageNumber = counter+"";
-			System.out.println("str : "+messageNumber +"int: "+counter);
-			newMessageList.add(new UserEntity(senderName , messageNumber , ""));
-			counter = 0; 
+			String messageNumber = counter + "";
+			System.out.println("str : " + messageNumber + "int: " + counter);
+			newMessageList.add(new UserEntity(senderName, messageNumber, ""));
+			counter = 0;
 		}
 		return newMessageList;
 	}
@@ -353,12 +449,12 @@ public class UserEntity {
 		return true;
 
 	}
- 
+
 	public static UserEntity getGroupName(String name) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		Query gaeQuery = new Query("groupMessages");
+		Query gaeQuery = new Query("conversations");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		for (Entity entity : pq.asIterable()) {
 			if (entity.getProperty("groupName").toString().equals(name)) {
@@ -372,19 +468,20 @@ public class UserEntity {
 
 		return null;
 	}
+
 	public static UserEntity isMemmber(String userName) {// AA
-		if (userName == ""){
-			return null ;
-		} 
-	DatastoreService datastore = DatastoreServiceFactory
+		if (userName == "") {
+			return null;
+		}
+		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		Query gaeQuery = new Query("groupMessages");
+		Query gaeQuery = new Query("conversations");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		for (Entity entity : pq.asIterable()) {
-			if (entity.getProperty("memmber").toString().equals(userName)) {
+			if (entity.getProperty("memmbers").toString().equals(userName)) {
 				UserEntity returnedUser = new UserEntity(entity.getProperty(
-						"groupName").toString(), entity.getProperty("sender")
-						.toString(), entity.getProperty("message").toString());
+						"message").toString(), entity.getProperty("sender")
+						.toString(), entity.getProperty("groupName").toString());
 
 				return returnedUser;
 			}
@@ -393,23 +490,33 @@ public class UserEntity {
 		return null;
 	}
 
-	public Boolean createGroupMessage(String name, String memmber ,String message  ) {
+	public Boolean createGroupMessage(String name, String memmber,
+			String message) {
 
 		System.out.println("database1 ");
+
 		KeepUserName username = new KeepUserName();
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query gaeQuery = new Query("groupMessages");
-		PreparedQuery pq = datastore.prepare(gaeQuery) ;
+		UserEntity user = new UserEntity();
+		user = user.isMemmber(username.getUserName());
+		System.out.println("here is user KKK :" + user + " MSG :" + message
+				+ "Gr ;" + name);
+		// if(user.equals(null) && message!=null && name.equals(null )) return
+		// true ;
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("conversations");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-		Entity employee = new Entity("groupMessages");
+
+		Entity employee = new Entity("conversations");
 		employee.setProperty("sender", username.getUserName());
-		employee.setProperty("groupName",name);
+		employee.setProperty("groupName", name);
 		employee.setProperty("message", message);
-		employee.setProperty("memmbers" , memmber );
+		employee.setProperty("memmbers", memmber);
 		System.out.println("database ");
 		datastore.put(employee);
 		System.out.println("database4 ");
-		return true ;
+		return true;
 	}
 
 	public Boolean deleteEntity(String reqName, String flag) {

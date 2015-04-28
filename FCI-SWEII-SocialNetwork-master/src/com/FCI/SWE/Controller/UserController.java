@@ -1,4 +1,5 @@
 package com.FCI.SWE.Controller;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,10 +41,9 @@ import com.google.api.server.spi.BackendService.Properties;
  * @since 2014-02-12
  *
  */
+
 @Path("/")
 @Produces("text/html")
-
-
 public class UserController {
 	/**
 	 * Action function to render Signup page, this function will be executed
@@ -56,6 +56,7 @@ public class UserController {
 	public Response signUp() {
 		return Response.ok(new Viewable("/jsp/register")).build();
 	}
+
 	/**
 	 * Action function to render home page of application, home page contains
 	 * only signup and login buttons
@@ -67,8 +68,7 @@ public class UserController {
 	public Response index() {
 		return Response.ok(new Viewable("/jsp/entryPoint")).build();
 	}
-	 
-	
+
 	/**
 	 * Action function to render login page this function will be executed using
 	 * url like this /rest/login
@@ -80,22 +80,25 @@ public class UserController {
 	public Response login() {
 		return Response.ok(new Viewable("/jsp/login")).build();
 	}
+
 	@GET
 	@Path("/userspage")
 	public Response userspage() {
 		return Response.ok(new Viewable("/jsp/userspage")).build();
 	}
+
 	@GET
 	@Path("/message")
 	public Response message() {
 		return Response.ok(new Viewable("/jsp/message")).build();
 	}
-	
+
 	@GET
 	@Path("/groupMessage")
 	public Response groupMessage() {
 		return Response.ok(new Viewable("/jsp/groupMessage")).build();
 	}
+
 	/**
 	 * Action function to response to signup request, This function will act as
 	 * a controller part and it will calls RegistrationService to make
@@ -117,10 +120,10 @@ public class UserController {
 		String serviceUrl = "http://localhost:8888/rest/RegistrationService";
 		try {
 			URL url = new URL(serviceUrl);
-			
+
 			String urlParameters = "uname=" + uname + "&email=" + email
 					+ "&password=" + pass;
-			
+
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -131,29 +134,29 @@ public class UserController {
 			connection.setReadTimeout(60000); // 60 Seconds
 			connection.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded;charset=UTF-8");
-			
+
 			OutputStreamWriter writer = new OutputStreamWriter(
 					connection.getOutputStream());
-			if(uname == null && pass == null && email==null){
+			if (uname == null && pass == null && email == null) {
 				UserEntity user = new UserEntity();
 				KeepUserName n = new KeepUserName();
-				String s =n.getUserName();
+				String s = n.getUserName();
 				// serv.getUserName();
-				 System.out.println("good man : "+s);
+				System.out.println("good man : " + s);
 				user.saveUser2(s, "1");
 				return "Accepted";
-				
+
 			}
 			writer.write(urlParameters);
 			writer.flush();
 			String line, retJson = "";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
-			
+
 			while ((line = reader.readLine()) != null) {
 				retJson += line;
 			}
-			
+
 			writer.close();
 			reader.close();
 			JSONParser parser = new JSONParser();
@@ -226,28 +229,27 @@ public class UserController {
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
 				return null;
-			 Map< String ,  ArrayList<UserEntity>> map = new HashMap<String , ArrayList<UserEntity> >();
-		
-			UserEntity user = UserEntity.getUser (object.toJSONString());
+			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
+
+			UserEntity user = UserEntity.getUser(object.toJSONString());
 			ArrayList<UserEntity> requistList = new ArrayList<UserEntity>();
-			ArrayList<UserEntity> messageList = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> s = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> groupMessageList = new ArrayList<UserEntity>();
-			
+			ArrayList<UserEntity> messageList = new ArrayList<UserEntity>();
 			KeepUserName u = new KeepUserName();
-			 
-			requistList.addAll(user.searchForReq(u.getUserName()));	
-			map.put("friends",requistList);
+
+			requistList.addAll(user.searchForReq(u.getUserName()));
+			map.put("friends", requistList);
 			messageList.addAll(user.getSenderMessages(u.getUserName()));
-			map.put("messages",messageList);
-			
-			groupMessageList.addAll(user.getGroupMessages(u.getUserName()));
-			System.out.println("gh :"+groupMessageList);
+			map.put("messages", messageList);
+			groupMessageList.addAll(user.getNotificationGMSG(u.getUserName()));
+			System.out.println("gh :" + groupMessageList);
 			map.put("GMSG", groupMessageList);
 			System.out.println("home group message ");
-			return Response.ok(new Viewable("/jsp/home",map)).build();
-			
+			return Response.ok(new Viewable("/jsp/home", map)).build();
+
 		} catch (MalformedURLException e) {
-		 
+
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -302,20 +304,20 @@ public class UserController {
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
 				return null;
-			
+
 			Map<String, String> map = new HashMap<String, String>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
 			map.put("name", user.getName());
 			map.put("email", user.getEmail());
 			KeepUserName n = new KeepUserName();
-			String s =n.getUserName();
-			//serv.getUserName();
-			 System.out.println("good man : "+s);
+			String s = n.getUserName();
+
+			System.out.println("good man : " + s);
 			user.saveUser2(s, "0");
-			//user.saveFriend(user.getName(), "users");
+
 			return Response.ok(new Viewable("/jsp/userspage", map)).build();
 		} catch (MalformedURLException e) {
-			//TODO Auto-generated catch block
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -330,20 +332,22 @@ public class UserController {
 		 */
 		return null;
 	}
-	
+
 	@POST
 	@Path("/groupMessage")
 	@Produces("text/html")
-	public Response groupMessage(@FormParam("groupName") String groupName , @FormParam("memmber") String memmber,
+	public Response groupMessage(@FormParam("groupName") String groupName,
+			@FormParam("memmber") String memmber,
 			@FormParam("message") String message) {
-		
-		String serviceUrl = "http://localhost:8888/rest/GroupMessage" ;
+
+		String serviceUrl = "http://localhost:8888/rest/GroupMessage";
 		try {
-		    //System.out.println("messageName :"+name + "messages :"+message );
+
 			URL url = new URL(serviceUrl);
-			String urlParameters = "groupName=" + groupName +"&memmber=" + memmber+ "&message=" + message  ;
+			String urlParameters = "groupName=" + groupName + "&memmber="
+					+ memmber + "&message=" + message;
 			HttpURLConnection connection = (HttpURLConnection) url
-			.openConnection();
+					.openConnection();
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
@@ -360,27 +364,40 @@ public class UserController {
 			String line, retJson = "";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
-			
-			while ((line = reader.readLine()) != null) {	
+
+			while ((line = reader.readLine()) != null) {
 				retJson += line;
 			}
+
 			writer.close();
 			reader.close();
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-			System.out.println("groupName_here : "+ groupName);
-			System.out.println("memmber_here : "+ memmber);
-			System.out.println("message_here  : "+ message);
-			 Map<String , ArrayList <UserEntity> > map = new HashMap<String , ArrayList<UserEntity> >();
-			 UserEntity user = new UserEntity();
+			System.out.println("groupName_here : " + groupName);
+			System.out.println("memmber_here : " + memmber);
+			System.out.println("message_here  : " + message);
 			ArrayList<UserEntity> requistList = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> groupMessageList = new ArrayList<UserEntity>();
 			KeepUserName u = new KeepUserName();
-			groupMessageList=user.getGroupMessages(u.getUserName()) ;
-			map.put("GMSG",groupMessageList);
-			
-			return Response.ok(new Viewable("/jsp/groupMessage",map)).build();
+			KeepUserName username = new KeepUserName();
+			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
+			UserEntity user = new UserEntity();
+			UserEntity user2 = new UserEntity();
+			user2 = user2.isMemmber(username.getUserName());
+			System.out.println("user2 :" + user2);
+			if (user2.equals(null)) {
+				groupMessageList.add(new UserEntity("", "", ""));
+				System.out.println("dfdf");
+				map.put("GMSG", groupMessageList);
+
+			} else {
+
+				groupMessageList.addAll(user.getGroupMessages(u.getUserName()));
+				map.put("GMSG", groupMessageList);
+
+			}
+			return Response.ok(new Viewable("/jsp/groupMessage", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -397,18 +414,20 @@ public class UserController {
 		 */
 		return null;
 	}
+
 	@POST
 	@Path("/message")
 	@Produces("text/html")
-	public Response message( 	@FormParam("name") String name,	@FormParam("message") String message) {
-		
-		String serviceUrl = "http://localhost:8888/rest/MessageService" ;
+	public Response message(@FormParam("name") String name,
+			@FormParam("message") String message) {
+
+		String serviceUrl = "http://localhost:8888/rest/MessageService";
 		try {
-			//System.out.println("messageName :"+name + "messages :"+message );
+
 			URL url = new URL(serviceUrl);
-			String urlParameters = "name=" + name +"&message=" + message;
+			String urlParameters = "name=" + name + "&message=" + message;
 			HttpURLConnection connection = (HttpURLConnection) url
-			.openConnection();
+					.openConnection();
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
@@ -425,8 +444,8 @@ public class UserController {
 			String line, retJson = "";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
-			
-			while ((line = reader.readLine()) != null) {	
+
+			while ((line = reader.readLine()) != null) {
 				retJson += line;
 			}
 			writer.close();
@@ -434,20 +453,21 @@ public class UserController {
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-		 
-			 Map< String ,  ArrayList <UserEntity> > map = new HashMap< String  , ArrayList<UserEntity>>();
-			 UserEntity user = new UserEntity();
+
+			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
+			UserEntity user = new UserEntity();
 			ArrayList<UserEntity> messageList = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> messageList2 = new ArrayList<UserEntity>();
 			KeepUserName u = new KeepUserName();
-			if(name == null ){
+			if (name == null) {
 				messageList.addAll(user.getMessages(u.getUserName()));
-				map.put("messages",messageList);
-			}else {
-				messageList2.addAll(user.getSpecificMessages(u.getUserName(), name));
-				map.put("messages",messageList2);
+				map.put("messages", messageList);
+			} else {
+				messageList2.addAll(user.getSpecificMessages(u.getUserName(),
+						name));
+				map.put("messages", messageList2);
 			}
-			return Response.ok(new Viewable("/jsp/message",map)).build();
+			return Response.ok(new Viewable("/jsp/message", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
