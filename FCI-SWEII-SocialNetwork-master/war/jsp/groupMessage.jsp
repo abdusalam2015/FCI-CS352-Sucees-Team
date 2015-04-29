@@ -58,7 +58,6 @@
 
 				<form action="/social/groupMessage" method="post">
 					GroupName : <input type="text" name="groupName" /> <br> <br>
-
 					Message :
 					<textarea rows="20" cols="50" name="message">
            </textarea>

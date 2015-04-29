@@ -18,36 +18,46 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.storage.onestore.v3.OnestoreEntity.User;
 
 /**
- * <h1>User Entity class</h1>
- * <p>
- * This class will act as a model for user, it will holds user data
- * </p>
- *
- * @author Mohamed Samir
+ * @author Kamal Alhusam
+ * @author Islam imam
+ * @author Hamed alghazaly
+ * @author Abdussalam Al-shouiby
  * @version 1.0
- * @since 2014-02-12
+ * @since 2015-03-12
  */
 public class UserEntity {
-	private String name;
-	private String email;
-	private String password;
 
-	/**
-	 * Constructor accepts user data
-	 * 
-	 * @param name
-	 *            user name
-	 * @param email
-	 *            user email
-	 * @param password
-	 *            user provided password
-	 */
-	public UserEntity() {// AA
+	public String name;
+	public String email;
+	public String password;
+	public String live;
+	public String birthdate;
+	public String student;
+	public String nationality;
+
+	public UserEntity() { 
 		this.name = "";
 		this.email = "";
 		this.password = "";
+		this.live = "";
+		this.birthdate = "";
+		this.student = "";
+		this.nationality = "";
+
+	}
+
+	public UserEntity(String name, String email, String passwotd, String live,
+			String birthdate, String student, String nationality) {
+		this.name = name;
+		this.email = email;
+		this.password = passwotd;
+		this.live = live;
+		this.birthdate = birthdate;
+		this.student = student;
+		this.nationality = nationality;
 
 	}
 
@@ -55,12 +65,10 @@ public class UserEntity {
 		this.name = name;
 		this.email = email;
 		this.password = password;
-
 	}
 
 	public UserEntity(String name) {
 		this.name = name;
-
 	}
 
 	public String getName() {
@@ -75,15 +83,22 @@ public class UserEntity {
 		return password;
 	}
 
-	/**
-	 * 
-	 * This static method will form UserEntity class using json format contains
-	 * user data
-	 * 
-	 * @param json
-	 *            String in json format contains user data
-	 * @return Constructed user entity
-	 */
+	public String getLive() {
+		return live;
+	}
+
+	public String getStudent() {
+		return student;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public String getBirthdate() {
+		return birthdate;
+	}
+
 	public static UserEntity getUser(String json) {
 
 		JSONParser parser = new JSONParser();
@@ -92,24 +107,12 @@ public class UserEntity {
 			return new UserEntity(object.get("name").toString(), object.get(
 					"email").toString(), object.get("password").toString());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return null;
 
 	}
-
-	/**
-	 * 
-	 * This static method will form UserEntity class using user name and
-	 * password This method will search for user in datastore
-	 * 
-	 * @param name
-	 *            user name
-	 * @param pass
-	 *            user password
-	 * @return Constructed user entity
-	 */
 
 	public static UserEntity getUser(String name, String pass) {
 		DatastoreService datastore = DatastoreServiceFactory
@@ -131,7 +134,7 @@ public class UserEntity {
 		return null;
 	}
 
-	public static UserEntity getUserOnly(String name) {// AA
+	public static UserEntity getUserOnly(String name) {
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -150,24 +153,39 @@ public class UserEntity {
 		return null;
 	}
 
-	public static ArrayList<UserEntity> getGroupMessages(String userName) {// AA
+	public static UserEntity getpage(String pageName) {
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("pages");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("pageName").toString().equals(pageName)) {
+				UserEntity returnedUser = new UserEntity(entity.getProperty(
+						"pageName").toString(), entity.getProperty("likes")
+						.toString(), entity.getProperty("password").toString());
+
+				return returnedUser;
+			}
+		}
+
+		return null;
+	}
+
+	public static ArrayList<UserEntity> getGroupMessages(String userName) {
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("conversations");
 
 		PreparedQuery pq = datastore.prepare(gaeQuery);
-
-		System.out.println("islam");
 		String str = "";
 		ArrayList<UserEntity> messageList = new ArrayList<>();
 		for (Entity entity : pq.asIterable()) {
-			System.out.println("islam1");
+
 			if (entity.getProperty("memmbers").toString().equals(userName)
 					|| entity.getProperty("sender").toString().equals(userName)) {
 				str = entity.getProperty("groupName").toString();
-				System.out.println("islam2");
-
 				for (Entity entity2 : pq.asIterable()) {
 					if (str.equals(entity2.getProperty("groupName").toString())) {
 						UserEntity returnedUser = new UserEntity(entity2
@@ -175,8 +193,6 @@ public class UserEntity {
 								.getProperty("sender").toString(), entity2
 								.getProperty("groupName").toString());
 						messageList.add(returnedUser);
-						System.out.println("islam3" + messageList);
-
 					}
 					break;
 
@@ -187,7 +203,7 @@ public class UserEntity {
 		return messageList;
 	}
 
-	public static ArrayList<UserEntity> searchForReq(String name) {// AA
+	public static ArrayList<UserEntity> searchForReq(String name) {
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -203,9 +219,8 @@ public class UserEntity {
 					&& entity.getProperty("accepted").toString().equals("0")
 					&& entity.getProperty("userName").toString() != name) {
 
-				returnedUser = new UserEntity(entity.getProperty("userName")
-						.toString());
-				System.out.println("fun :-" + returnedUser.getName());
+				returnedUser = new UserEntity(entity.getProperty("userName").toString() );
+
 				requestList.add(returnedUser);
 
 			}
@@ -218,7 +233,6 @@ public class UserEntity {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("messages");
-
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		UserEntity returnedUser = null;
 
@@ -226,11 +240,9 @@ public class UserEntity {
 
 		for (Entity entity : pq.asIterable()) {
 			if (entity.getProperty("receiver").toString().equals(userName)) {
-
 				returnedUser = new UserEntity(entity.getProperty("message")
 						.toString(), entity.getProperty("receiver").toString(),
 						entity.getProperty("sender").toString());
-				System.out.println("mmmge  :-" + returnedUser.getName());
 				messageList.add(returnedUser);
 
 			}
@@ -293,7 +305,7 @@ public class UserEntity {
 				returnedUser = new UserEntity(entity.getProperty("message")
 						.toString(), entity.getProperty("receiver").toString(),
 						entity.getProperty("sender").toString());
-				System.out.println("mmmge  :-" + returnedUser.getName());
+
 				messageList.add(returnedUser);
 
 			}
@@ -322,9 +334,6 @@ public class UserEntity {
 				returnedUser = new UserEntity(entity.getProperty("groupName")
 						.toString(), entity.getProperty("message").toString(),
 						entity.getProperty("sender").toString());
-
-				System.out.println("mmmge  :-" + returnedUser.getName());
-
 				mySet.add(entity.getProperty("groupName").toString());
 				conversationList.add(returnedUser);
 
@@ -333,18 +342,12 @@ public class UserEntity {
 
 		int counter = 0;
 		for (String gName : mySet) {
-			System.out.println("tomoro2 :" + gName);
-
 			for (int i = 0; i < conversationList.size(); i++) {
-
-				System.out.println("tomoro :"
-						+ conversationList.get(i).getName());
 				if (conversationList.get(i).getName().equals(gName)) {
 					counter++;
 				}
 			}
 			String messageNumber = counter + "";
-			System.out.println("str : " + messageNumber + "int: " + counter);
 			newConversationList.add(new UserEntity(gName, messageNumber, ""));
 			counter = 0;
 		}
@@ -369,7 +372,6 @@ public class UserEntity {
 				returnedUser = new UserEntity(entity.getProperty("sender")
 						.toString(), entity.getProperty("receiver").toString(),
 						entity.getProperty("message").toString());
-				System.out.println("mmmge  :-" + returnedUser.getName());
 				mySet.add(entity.getProperty("sender").toString());
 				messageList.add(returnedUser);
 
@@ -378,57 +380,66 @@ public class UserEntity {
 
 		int counter = 0;
 		for (String senderName : mySet) {
-			System.out.println("tomoro2 :" + senderName);
-
 			for (int i = 0; i < messageList.size(); i++) {
-
-				System.out.println("tomoro :" + messageList.get(i).getName());
 				if (messageList.get(i).getName().equals(senderName)) {
 					counter++;
 				}
 			}
 			String messageNumber = counter + "";
-			System.out.println("str : " + messageNumber + "int: " + counter);
 			newMessageList.add(new UserEntity(senderName, messageNumber, ""));
 			counter = 0;
 		}
 		return newMessageList;
 	}
 
-	/**
-	 * This method will be used to save user object in datastore
-	 * 
-	 * @return boolean if user is saved correctly or not
-	 */
-
 	public Boolean saveUser() {
-
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
-		Entity employee = new Entity("users", list.size() + 1);
+		Entity employee = new Entity("users");
 		employee.setProperty("name", this.name);
 		employee.setProperty("email", this.email);
 		employee.setProperty("password", this.password);
+		employee.setProperty("student", this.student);
+		employee.setProperty("live", this.live);
+		employee.setProperty("birthdate", this.birthdate);
+		employee.setProperty("nationality", this.nationality);
 		datastore.put(employee);
-
 		return true;
-
 	}
 
-	public Boolean saveUser2(String reqName, String flag) {
+	public Boolean saveUser2(String reqName, String flag , String uname) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		// Query gaeQuery = new Query("friends");
-		// PreparedQuery pq = datastore.prepare(gaeQuery);
-		// List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+		Entity employee = new Entity("friends");
+		employee.setProperty("userName", reqName);
+		employee.setProperty("requisted", uname);
+		employee.setProperty("accepted", flag);
+		datastore.put(employee);
+		return true;
+	}
+	public Boolean saveFriends(String reqName, String flag  ) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
 		Entity employee = new Entity("friends");
 		employee.setProperty("userName", reqName);
 		employee.setProperty("requisted", this.getName());
 		employee.setProperty("accepted", flag);
-		// employee.setProperty("password", this.password);
+		datastore.put(employee);
+		return true;
+	}
+
+	public Boolean savePage(String pageName, String like) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+
+		Entity employee = new Entity("pages");
+		employee.setProperty("pageName", pageName);
+		employee.setProperty("like", like);
+		employee.setProperty("id", like);
+
 		datastore.put(employee);
 		return true;
 	}
@@ -447,7 +458,6 @@ public class UserEntity {
 		employee.setProperty("message", message);
 		datastore.put(employee);
 		return true;
-
 	}
 
 	public static UserEntity getGroupName(String name) {// AA
@@ -493,15 +503,9 @@ public class UserEntity {
 	public Boolean createGroupMessage(String name, String memmber,
 			String message) {
 
-		System.out.println("database1 ");
-
 		KeepUserName username = new KeepUserName();
 		UserEntity user = new UserEntity();
 		user = user.isMemmber(username.getUserName());
-		System.out.println("here is user KKK :" + user + " MSG :" + message
-				+ "Gr ;" + name);
-		// if(user.equals(null) && message!=null && name.equals(null )) return
-		// true ;
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Query gaeQuery = new Query("conversations");
@@ -513,9 +517,8 @@ public class UserEntity {
 		employee.setProperty("groupName", name);
 		employee.setProperty("message", message);
 		employee.setProperty("memmbers", memmber);
-		System.out.println("database ");
 		datastore.put(employee);
-		System.out.println("database4 ");
+
 		return true;
 	}
 
@@ -531,4 +534,125 @@ public class UserEntity {
 		datastore.put(employee);
 		return true;
 	}
+	public Boolean writePost(String name, String post , String privacy , String pub) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Entity employee = new Entity("posts");
+		KeepUserName obj = new KeepUserName();
+		employee.setProperty("userName", obj.getUserName());
+		employee.setProperty("post", post);
+		employee.setProperty("comments", "YES");
+		employee.setProperty("likes", "OK");
+		employee.setProperty("public", pub);
+		employee.setProperty("privacy", privacy);
+		datastore.put(employee);
+		return true;
+	}
+
+
+	public static ArrayList<UserEntity> getPosts(String uname) {
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		ArrayList<UserEntity> posts = new ArrayList<>();
+		Query gaeQuery = new Query("posts");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		UserEntity obj2 = new UserEntity();
+		String friends = getFriends(uname);
+		System.out.println("Friends : "+friends);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("userName").toString().equals(uname)  ||
+					friends.contains(entity.getProperty("userName").toString())  ) {
+				if(entity.getProperty("public").toString().equals("1") ){
+			UserEntity obj = new UserEntity(entity.getProperty("post")
+					.toString(), entity.getProperty("userName").toString(),
+					  entity.getProperty("likes").toString());
+				posts.add(obj);
+				}
+
+			}
+		}
+		return posts;
+	}
+	public static ArrayList<UserEntity> getPrivacyPosts(String uname) {
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		ArrayList<UserEntity> privacyPosts = new ArrayList<>();
+		Query gaeQuery = new Query("posts");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		UserEntity obj2 = new UserEntity();
+		 
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("userName").toString().equals(uname)  &&
+					entity.getProperty("privacy").toString().equals("1") ) {
+				 
+			UserEntity obj = new UserEntity(entity.getProperty("post")
+					.toString(), entity.getProperty("userName").toString(),
+					  entity.getProperty("likes").toString());
+			privacyPosts.add(obj);
+				}
+
+			}
+		
+		return privacyPosts;
+	}
+
+	public static String getFriends(String userName) {// AA
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Query gaeQuery = new Query("friends");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		UserEntity returnedUser = null;
+		String friends = "";
+
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("userName").toString().equals(userName)
+					||entity.getProperty("requisted").toString().equals(userName)
+					&& entity.getProperty("accepted").toString().equals("1")) {
+				friends += entity.getProperty("requisted").toString();
+				friends += " ";
+
+			}
+		}
+		return friends;
+	}
+
+	public Boolean writeHashTag(String uname, String hashtage, String post) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+
+		Entity employee = new Entity("hashTags");
+		employee.setProperty("userName", uname);
+		employee.setProperty("hashTag", hashtage);
+		employee.setProperty("post", post);
+		datastore.put(employee);
+		return true;
+	}
+
+	public static ArrayList<UserEntity> getTimeLine(String name) {
+
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		ArrayList<UserEntity> timeLine = new ArrayList<>();
+		Query gaeQuery = new Query("users");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("name").toString().equals(name)) {
+
+				UserEntity obj = new UserEntity(entity.getProperty("name")
+						.toString(), entity.getProperty("email").toString(),
+						"password", entity.getProperty("live").toString(),
+						entity.getProperty("birthdate").toString(), entity
+								.getProperty("student").toString(), entity
+								.getProperty("nationality").toString());
+				timeLine.add(obj);
+				return timeLine;
+
+			}
+		}
+		return null;
+	}
+
 }

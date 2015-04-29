@@ -27,8 +27,7 @@
 	<div id="maindiv">
 		<div id="subdiv">
 			<a href="/social/signup/" style="color: red; height: 35px; border: 1">Sign
-				up</a> <br> <br>  
-			<br> <a href="/social/login/"
+				up</a> <br> <br> <br> <a href="/social/login/"
 				style="color: red; width: 300px; height: 35px; border: 1">Login</a>
 			<br>
 		</div>

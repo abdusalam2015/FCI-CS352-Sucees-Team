@@ -1,5 +1,8 @@
 package com.FCI.SWE.Services;
 
+import java.util.ArrayList;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,60 +15,45 @@ import com.FCI.SWE.Models.KeepUserName;
 import com.FCI.SWE.Models.UserEntity;
 
 /**
- * This class contains REST services, also contains action function for web
- * application
- * 
- * @author Mohamed Samir
+ * @author Kamal Alhusam
+ * @author Islam imam
+ * @author Hamed alghazaly
+ * @author Abdussalam Al-shouiby
  * @version 1.0
- * @since 2014-02-12
+ * @since 2015-03-12
  */
 @Path("/")
 @Produces("text/html")
 public class Service {
-
-	/*
-	 * @GET
-	 * 
-	 * @Path("/index") public Response index() { return Response.ok(new
-	 * Viewable("/jsp/entryPoint")).build(); }
-	 */
-
-	/**
-	 * Registration Rest service, this service will be called to make
-	 * registration. This function will store user data in data store
-	 * 
-	 * @param uname
-	 *            provided user name
-	 * @param email
-	 *            provided user email
-	 * @param pass
-	 *            provided password
-	 * @return Status json
-	 */
-	
 	@POST
 	@Path("/RegistrationService")
 	public String registrationService(@FormParam("uname") String uname,
-			@FormParam("email") String email, @FormParam("password") String pass) {
-
-		UserEntity user = new UserEntity(uname, email, pass);
+			@FormParam("email") String email,
+			@FormParam("password") String password,
+			@FormParam("birthdate") String birthdate,
+			@FormParam("live") String live,
+			@FormParam("nationality") String nationality,
+			@FormParam("student") String student) {
+		UserEntity user = new UserEntity(uname, email, password, birthdate,
+				live, nationality, student);
 		user.saveUser();
+
+		System.out.println("HHH");
 		JSONObject object = new JSONObject();
 		object.put("Status", "OK");
-
+		object.put("name", user.getName());
+		object.put("email", user.getEmail());
+		object.put("password", user.getPass());
+		// if (uname==null) {
+		System.out.println("heyeheyehey: ");
+		UserEntity user2 = new UserEntity();
+		KeepUserName userName = new KeepUserName();
+		user2.saveUser2(userName.getUserName(), "1", uname);
+		// return object.toString();
+		// }
 		return object.toString();
 	}
 
-	/**
-	 * Login Rest Service, this service will be called to make login process
-	 * also will check user data and returns new user from datastore
-	 * 
-	 * @param uname
-	 *            provided user name
-	 * @param pass
-	 *            provided user password
-	 * @return user in json format
-	 */
 	@POST
 	@Path("/LoginService")
 	public String loginService(@FormParam("uname") String uname,
@@ -75,8 +63,7 @@ public class Service {
 		UserEntity user = UserEntity.getUser(uname, pass);
 		if (user == null) {
 			object.put("Status", "Failed");
-			System.out.println("user is faild");
-			
+
 		} else {
 			System.out.println("user is OK");
 			object.put("Status", "OK");
@@ -90,68 +77,133 @@ public class Service {
 	@POST
 	@Path("/UserspageService")
 	public String userService(@FormParam("uname") String uname,
-			@FormParam("password") String pass) {
+			@FormParam("pass") String pass) {
 		JSONObject object = new JSONObject();
+		KeepUserName userName = new KeepUserName();
 		UserEntity user = UserEntity.getUserOnly(uname);
 		if (user == null) {
 			object.put("Status", "Failed");
-		} else{
+		} else {
 			object.put("Status", "OK");
 			object.put("name", user.getName());
 			object.put("email", user.getEmail());
 			object.put("password", user.getPass());
 		}
+
 		return object.toString();
 	}
-	
+
 	@POST
-	@Path("/MessageService")
-	public String message(@FormParam("name") String name , @FormParam("message") String message) {
+	@Path("/PostpageService")
+	public String postPage(@FormParam("name") String publicPost,
+			@FormParam("share") String sharePost,
+			@FormParam("privacy") String privacyPost) {
 		JSONObject object = new JSONObject();
-		UserEntity user = UserEntity.getUserOnly(name);
-		if (user == null  ){
-			System.out.println("the user is null" );
-			object.put("Status", "Failed");
-		}else {
-		user.saveMessage(name, message);
-		object.put("Status", "OK");	
+		KeepUserName userName = new KeepUserName();
+		// UserEntity user = UserEntity.getpage(searchPage);
+		// System.out.println("pages apge " + k);
+		// System.out.println("pages apge " + post);
+		UserEntity u = new UserEntity();
+		// // if (user == null && pageName == null ) return null ;
+		// if(pageName == null)
+		// u.savePage( searchPage, userName.getUserName());
+		// u.writePost(userName.getUserName(), privacy , "0" , "1");
+		System.out.println(privacyPost + " privacyPost" + "sharePost: "
+				+ sharePost + " publicPost :" + publicPost);
+		if (privacyPost != null) {
+			u.writePost(userName.getUserName(), privacyPost, "1", "0");
+			System.out.println(privacyPost + "privacyPost");
+		}
+		if (publicPost != null)
+			u.writePost(userName.getUserName(), publicPost, "0", "1");
+		if (sharePost != null)
+			u.writePost(userName.getUserName(), publicPost, "0", "1");
+
+		ArrayList<String> str = new ArrayList<>();
+		UserEntity user = new UserEntity();
+		String hashTag = "";
+		str.add(publicPost);
+
+		int x = str.get(0).indexOf('#');
+		int y = str.get(0).indexOf(" ", x);
+		hashTag = str.get(0).substring(x, y);
+		System.out.println("X is :" + x);
+		if (x >= 0) {
+			System.out.println("hashTag : " + hashTag);
+			user.writeHashTag(userName.getUserName(), hashTag, publicPost);
 		}
 		return object.toString();
 	}
-	
-	
+
+	/*
+	 * @POST
+	 * 
+	 * @Path("/PostpageService") public String postPage(@FormParam("name")
+	 * String post) { JSONObject object = new JSONObject(); KeepUserName
+	 * userName = new KeepUserName(); UserEntity user =
+	 * UserEntity.getUserOnly(post); ArrayList<String> str = new ArrayList<>();
+	 * System.out.println("post :"+post); user.writePost(userName.getUserName()
+	 * , post); /* if (post != null) { user.writePost(userName.getUserName(),
+	 * post); String hashTag = ""; str.add(post); int x = str.indexOf('#'); if
+	 * (x >= 0) { while (true) { if (str.get(x) == " ") break; hashTag +=
+	 * str.get(x); x++; } System.out.println("hashTag : " + hashTag);
+	 * user.writeHashTag(userName.getUserName(), hashTag, post); } }
+	 * 
+	 * return object.toString(); }
+	 */
+	@POST
+	@Path("/PagespageService")
+	public String pagesPage(@FormParam("pageName") String pageName,
+			@FormParam("pName") String searchPage) {
+		JSONObject object = new JSONObject();
+		KeepUserName userName = new KeepUserName();
+		UserEntity u = new UserEntity();
+
+		// // if (user == null && pageName == null ) return null ;
+		 if(searchPage != null)u.savePage( searchPage, userName.getUserName());
+		 if(pageName!=null)u.savePage(pageName,  userName.getUserName());
+		
+		return object.toString();
+	}
+
+	@POST
+	@Path("/MessageService")
+	public String message(@FormParam("name") String name,
+			@FormParam("message") String message) {
+		JSONObject object = new JSONObject();
+		UserEntity user = UserEntity.getUserOnly(name);
+		if (user == null) {
+			System.out.println("the user is null");
+			object.put("Status", "Failed");
+		} else {
+			user.saveMessage(name, message);
+			object.put("Status", "OK");
+		}
+		return object.toString();
+	}
+
 	@POST
 	@Path("/GroupMessage")
-	public String groupMessage(@FormParam("groupName") String groupName , @FormParam("memmber") String memmber,
+	public String groupMessage(@FormParam("groupName") String groupName,
+			@FormParam("memmber") String memmber,
 			@FormParam("message") String message) {
-		
 		JSONObject object = new JSONObject();
-		KeepUserName admin = new KeepUserName(); 
+		KeepUserName admin = new KeepUserName();
 		UserEntity group = UserEntity.getGroupName(groupName);
 		UserEntity user2 = new UserEntity();
-		System.out.println("groupName : "+groupName);
-		System.out.println("group : "+group);
-		System.out.println("memmber : "+memmber);
-		System.out.println("message  : "+message);
-		
-		if(groupName.equals(null) && memmber.equals(null) && message.equals(null) ){
-		//	user2.createGroupMessage(groupName, admin.getUserName(), message);
-			System.out.println("34343434343434343434343");
+		if (groupName.equals(null) && memmber.equals(null)
+				&& message.equals(null)) {
 			object.put("Status", "OK");
-		}else if(group == null){
-			System.out.println("tr1");
-			user2.createGroupMessage(groupName, admin.getUserName(), message);//create group only
-				System.out.println("tr34");
-				object.put("Status", "OK");	
-		}else if(  group != null && memmber == null ){
-			System.out.println("tr2") ;
+		} else if (group == null) {
+			user2.createGroupMessage(groupName, admin.getUserName(), message);
+			object.put("Status", "OK");
+		} else if (group != null && memmber == null) {
 			user2.createGroupMessage(groupName, memmber, message);
 			object.put("Status", "OK");
-			System.out.println("tr4");
-		}else {
-			user2.createGroupMessage(groupName,memmber, message);
+
+		} else {
+			user2.createGroupMessage(groupName, memmber, message);
 			object.put("Status", "OK");
-			System.out.println("tr3");	
 		}
 		return object.toString();
 	}
