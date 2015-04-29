@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=windows-1256"
 	pageEncoding="windows-1256"%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -82,13 +81,16 @@
 				placeholder="Search User " /> <input type="submit" value="Search">
 
 		</form>
-		<p>Friend Requests</p>
 		<c:forEach items="${it.friends}" var="user">
+
 			<a id="a2" href="/social/userspage">${user.name}</a>
+
 			<form action="/social/response" method="post">
-				Name : <input type="text" name="uname" /> <input id="input1"
-					type="submit" value="Accept">
+				<input id="input1" type="submit" value="Accept">
+
 			</form>
+
+
 		</c:forEach>
 		<br>
 
@@ -96,28 +98,11 @@
 
 		<c:forEach items="${it.post}" var="post">
 			<p>
-				<a id="a2" href="/social/postPage">${post.email} write this post
-					: </a> 
-				<c:out value="${post.name}"></c:out>
+				<c:out value="${post.name} "></c:out>
 			</p>
-			<br>
-			<a id="a2" href="/social/postPage">share </a>
 		</c:forEach>
-		
-		<form action="/social/postPage" method="post">
-			Hashtag Name : <input type="text" name="hashTag" /> <input type="submit"
-				value="show">
-		</form>
 
-		<c:forEach items="${it.onlyMe}" var="onlyme">
-			<p>
-				<a id="a2" href="/social/postPage">${onlyme.email} privacy post :
-				</a> <br>
-				<c:out value="${onlyme.name}"></c:out>
-			</p>
 
-			 
-		</c:forEach>
 		<div id="msgdiv">
 			<c:forEach items="${it.messages}" var="MSG">
 				<p>
