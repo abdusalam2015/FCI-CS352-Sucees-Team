@@ -37,12 +37,20 @@ public class Service {
 		UserEntity user = new UserEntity(uname, email, password, birthdate,
 				live, nationality, student);
 		user.saveUser();
+
+		System.out.println("HHH");
 		JSONObject object = new JSONObject();
 		object.put("Status", "OK");
 		object.put("name", user.getName());
 		object.put("email", user.getEmail());
 		object.put("password", user.getPass());
-
+		// if (uname==null) {
+		System.out.println("heyeheyehey: ");
+		UserEntity user2 = new UserEntity();
+		KeepUserName userName = new KeepUserName();
+		user2.saveUser2(userName.getUserName(), "1", uname);
+		// return object.toString();
+		// }
 		return object.toString();
 	}
 
@@ -87,47 +95,69 @@ public class Service {
 
 	@POST
 	@Path("/PostpageService")
-	public String postPage(@FormParam("posts") String post) {
+	public String postPage(@FormParam("name") String publicPost,
+			@FormParam("share") String sharePost,
+			@FormParam("privacy") String privacyPost , @FormParam("hashTag") String hashTage) {
 		JSONObject object = new JSONObject();
 		KeepUserName userName = new KeepUserName();
-		UserEntity user = UserEntity.getUserOnly(post);
-		ArrayList<String> str = new ArrayList<>();
-		if (post != null) {
-			user.writePost(userName.getUserName(), post);
-			String hashTag = "";
-			str.add(post);
-			int x = str.indexOf('#');
-			if (x >= 0) {
-				while (true) {
-					if (str.get(x) == " ")
-						break;
-					hashTag += str.get(x);
-					x++;
-				}
-				System.out.println("hashTag : " + hashTag);
-				user.writeHashTag(userName.getUserName(), hashTag, post);
-			}
+		UserEntity u = new UserEntity();
+	 
+		System.out.println(privacyPost + " privacyPost" + "sharePost: "
+				+ sharePost + " publicPost :" + publicPost);
+		if (privacyPost != null) {
+			
+			u.writePost(userName.getUserName(), privacyPost, "1", "0");
+			System.out.println(privacyPost + "privacyPost");
 		}
+		if (publicPost != null)
+			u.writePost(userName.getUserName(), publicPost, "0", "1");
+		if (sharePost != null)
+			u.writePost(userName.getUserName(), sharePost, "0", "1");
 
+ 	ArrayList<String> str = new ArrayList<>();
+		UserEntity user = new UserEntity();
+		String hashTag = "";
+		str.add(publicPost);
+
+		int x = str.get(0).indexOf('#');
+		int y = str.get(0).indexOf(" ", x);
+		hashTag = str.get(0).substring(x, y);
+		System.out.println("X is :" + x);
+		if (x >= 0) {
+			System.out.println("hashTag : " + hashTag);
+			user.writeHashTag(userName.getUserName(), hashTag, publicPost);
+		}
 		return object.toString();
 	}
 
+	/*
+	 * @POST
+	 * 
+	 * @Path("/PostpageService") public String postPage(@FormParam("name")
+	 * String post) { JSONObject object = new JSONObject(); KeepUserName
+	 * userName = new KeepUserName(); UserEntity user =
+	 * UserEntity.getUserOnly(post); ArrayList<String> str = new ArrayList<>();
+	 * System.out.println("post :"+post); user.writePost(userName.getUserName()
+	 * , post); /* if (post != null) { user.writePost(userName.getUserName(),
+	 * post); String hashTag = ""; str.add(post); int x = str.indexOf('#'); if
+	 * (x >= 0) { while (true) { if (str.get(x) == " ") break; hashTag +=
+	 * str.get(x); x++; } System.out.println("hashTag : " + hashTag);
+	 * user.writeHashTag(userName.getUserName(), hashTag, post); } }
+	 * 
+	 * return object.toString(); }
+	 */
 	@POST
 	@Path("/PagespageService")
 	public String pagesPage(@FormParam("pageName") String pageName,
 			@FormParam("pName") String searchPage) {
 		JSONObject object = new JSONObject();
 		KeepUserName userName = new KeepUserName();
-		// UserEntity user = UserEntity.getpage(searchPage);
-		System.out.println("pages apge " + pageName);
 		UserEntity u = new UserEntity();
 
 		// // if (user == null && pageName == null ) return null ;
-		// if(pageName == null)
-		// u.savePage( searchPage, userName.getUserName());
-
-		u.savePage(pageName, searchPage); // create page
-
+		 if(searchPage != null)u.savePage( searchPage, userName.getUserName());
+		 if(pageName!=null)u.savePage(pageName,  userName.getUserName());
+		
 		return object.toString();
 	}
 

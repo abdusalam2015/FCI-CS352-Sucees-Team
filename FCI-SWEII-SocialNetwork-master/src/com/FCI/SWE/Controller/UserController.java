@@ -102,8 +102,6 @@ public class UserController {
 			@FormParam("live") String live,
 			@FormParam("nationality") String nationality,
 			@FormParam("student") String student) {
-		System.out.println("heyeheyehey: ");
-
 		String serviceUrl = "http://localhost:8888/rest/RegistrationService";
 
 		try {
@@ -137,14 +135,6 @@ public class UserController {
 			}
 			writer.close();
 			reader.close();
-
-			if (uname.equals(null) && password.equals(null)
-					&& email.equals(null)) {
-				UserEntity user = new UserEntity();
-				KeepUserName userName = new KeepUserName();
-				user.saveUser2(userName.getUserName(), "1");
-				return "Accepted";
-			}
 
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
@@ -209,19 +199,22 @@ public class UserController {
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
 			ArrayList<UserEntity> list = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> list2 = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> list3 = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> list4 = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> list5 = new ArrayList<UserEntity>();
+			
 			KeepUserName userName = new KeepUserName();
-			list.addAll(user.searchForReq(userName.getUserName()));
-			map.put("friends", list);
-			list.clear();
-			list.addAll(user.getSenderMessages(userName.getUserName()));
-			map.put("messages", list);
-			list.clear();
+			list2.addAll(user.searchForReq(userName.getUserName()));
+			map.put("friends", list2);
+			list3.addAll(user.getSenderMessages(userName.getUserName()));
+			map.put("messages", list3);
 			list.addAll(user.getNotificationGMSG(userName.getUserName()));
 			map.put("GMSG", list);
-			list.clear();
-			list.addAll(user.getposts(userName.getUserName()));
-			map.put("post", list);
-
+			list4.addAll(user.getPosts(userName.getUserName())); // if table is found
+			map.put("post", list4);
+			list5.addAll(user.getPrivacyPosts(userName.getUserName()));
+			map.put("onlyMe", list5);
 			return Response.ok(new Viewable("/jsp/home", map)).build();
 
 		} catch (MalformedURLException e) {
@@ -280,7 +273,7 @@ public class UserController {
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
 			KeepUserName n = new KeepUserName();
-			user.saveUser2(n.getUserName(), "0");
+			user.saveFriends(n.getUserName(), "0" );
 			
 			timeLine.addAll(user.getTimeLine(uname));
 			map.put("timeline", timeLine);
@@ -441,12 +434,13 @@ public class UserController {
 	@POST
 	@Path("/postPage")
 	@Produces("text/html")
-	public Response postPage(@FormParam("posts") String postName,
-			@FormParam("name") String name) {
+	public Response postPage(@FormParam("name") String postName,
+			@FormParam("share") String sharePost , @FormParam("privacy") String privacy ,
+			@FormParam("hashTag") String hashTag) {
 		String serviceUrl = "http://localhost:8888/rest/PostpageService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "posts=" + postName;
+			String urlParameters = "name=" + postName + "&share=" +sharePost +"&privacy=" + privacy +"&hashTag" + hashTag;
 			HttpURLConnection connection = (HttpURLConnection) url
 					.openConnection();
 			connection.setDoOutput(true);
@@ -474,10 +468,21 @@ public class UserController {
 			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-			 
-			ArrayList<UserEntity> timeLine = new ArrayList<UserEntity>();
+			 KeepUserName userName = new KeepUserName();
+			ArrayList<UserEntity> posts = new ArrayList<UserEntity>();
+			ArrayList<UserEntity> hashTagList = new ArrayList<UserEntity>();
+			UserEntity caller = new UserEntity();
+			posts.addAll(caller.getPosts(userName.getUserName()));
+			System.out.println("hashtag :"+hashTag);
+			if(hashTag != null){
+				
+			//hashTagList.addAll(caller.getHashTag(hashTag));
+			System.out.println("hashtagloop :"+hashTag);
+			}
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
-			 
+			map.put("post", posts);
+			
+			map.put("hashTag", hashTagList);
 			Response.ok(new Viewable("/jsp/postPage", map)).build();
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -533,6 +538,7 @@ public class UserController {
 			ArrayList<UserEntity> page = new ArrayList<UserEntity>();
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			page.add(new UserEntity(pageName, like , ""));
+			System.out.println("Page: "+page);
 			map.put("pageName", page);
 			return Response.ok(new Viewable("/jsp/pagesPage", map)).build();
 		} catch (MalformedURLException e) {
