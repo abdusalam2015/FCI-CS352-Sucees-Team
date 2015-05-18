@@ -22,13 +22,16 @@ public class KeepUserName {
 		
 	}
 	public static String userName ; 
-	public KeepUserName(String name){
+	private  KeepUserName(String name){
 	 
 		userName  = name ; 
 		
 	}
 	public static String   getUserName(){
 		return userName ; 
+	}
+	public   void   setUserName(String userName){
+		 this.userName = userName ;
 	}
 	
 

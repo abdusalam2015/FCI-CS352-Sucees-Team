@@ -43,10 +43,10 @@
 
 		</p>
 		<div id="sendmsgdiv">
-			<c:forEach items="${it.GMSG}" var="GMSG">
+			<c:forEach items="${it.GMSG}" var="G">
 				<p>
-					${GMSG.email} :
-					<c:out value="${GMSG.name}">
+				 ${G.email}
+					<c:out value="${G.name}">
 					</c:out>
 				</p>
 

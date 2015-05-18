@@ -7,4 +7,4 @@ gaeHrdEnabled=true
 gaeLaunchAppInBrowser=true
 googleCloudSqlEnabled=false
 localDevMySqlEnabled=true
-validationExclusions=src/com/FCI/SWE/Services/
+validationExclusions=src/com/FCI/SWE/Services/|src/com/FCI/SWE/Controller/UserController.java|src/UserControllerTest/UserControllerTessting.java|src/com/FCI/SWE/Controller/

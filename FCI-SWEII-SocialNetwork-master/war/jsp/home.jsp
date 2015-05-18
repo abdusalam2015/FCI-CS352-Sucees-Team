@@ -82,6 +82,7 @@
 				placeholder="Search User " /> <input type="submit" value="Search">
 
 		</form>
+		
 		<p>Friend Requests</p>
 		<c:forEach items="${it.friends}" var="user">
 			<a id="a2" href="/social/userspage">${user.name}</a>
@@ -96,7 +97,7 @@
 
 		<c:forEach items="${it.post}" var="post">
 			<p>
-				<a id="a2" href="/social/postPage">${post.email} write this post
+				<a id="a2" href="/social/postPage">${post.email} write post
 					: </a>
 				<c:out value="${post.name}"></c:out>
 			</p>
@@ -147,9 +148,11 @@
 
 			Go to Group Page click
 			<form action="/social/groupMessage" method="post">
+			group Name :<input type="text" name="groupName" />
 				<input type="submit" value="here">
 			</form>
-			<br>
+			 
+			 
 
 			<p>Create page</p>
 			<form action="/social/pagesPage" method="post">
