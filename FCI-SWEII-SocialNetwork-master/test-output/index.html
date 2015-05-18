@@ -48,7 +48,7 @@
               <ul>
                 <li>
                   <a href="#" class="navigator-link " panel-name="test-xml-Default_suite">
-                    <span>C:\Users\Abdussalam AbduHelal\AppData\Local\Temp\testng-eclipse-86820508\testng-customsuite.xml</span>
+                    <span>C:\Users\Abdussalam AbduHelal\AppData\Local\Temp\testng-eclipse-1834264\testng-customsuite.xml</span>
                   </a> <!-- navigator-link  -->
                 </li>
                 <li>
@@ -101,7 +101,7 @@
                     <div class="method-list-content failed suite-Default_suite">
                       <span>
                         <img width="3%" src="failed.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Default_suite" title="com.FCI.SWE.Services.MessageServiceTest" hash-for-method="message">message</a> <!-- method navigator-link -->
+                        <a href="#" class="method navigator-link" panel-name="suite-Default_suite" title="com.FCI.SWE.Controller.UserControllerTessting" hash-for-method="UserController">UserController</a> <!-- method navigator-link -->
                       </span>
                       <br/>
                     </div> <!-- method-list-content failed suite-Default_suite -->
@@ -119,22 +119,17 @@
           <div class="suite-Default_suite-class-failed">
             <div class="main-panel-header rounded-window-top">
               <img src="failed.png"/>
-              <span class="class-name">com.FCI.SWE.Services.MessageServiceTest</span>
+              <span class="class-name">com.FCI.SWE.Controller.UserControllerTessting</span>
             </div> <!-- main-panel-header rounded-window-top -->
             <div class="main-panel-content rounded-window-bottom">
               <div class="method">
                 <div class="method-content">
-                  <a name="message">
-                  </a> <!-- message -->
-                  <span class="method-name">message</span>
-                  <div class="stack-trace">java.lang.NullPointerException: No API environment is registered for this thread.
-	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppId(DatastoreApiHelper.java:117)
-	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppIdNamespace(DatastoreApiHelper.java:133)
-	at com.google.appengine.api.datastore.Query.&lt;init&gt;(Query.java:215)
-	at com.google.appengine.api.datastore.Query.&lt;init&gt;(Query.java:144)
-	at com.FCI.SWE.Models.UserEntity.getUserOnly(UserEntity.java:141)
-	at com.FCI.SWE.Services.MessageService.message(MessageService.java:22)
-	at com.FCI.SWE.Services.MessageServiceTest.message(MessageServiceTest.java:9)
+                  <a name="UserController">
+                  </a> <!-- UserController -->
+                  <span class="method-name">UserController</span>
+                  <div class="stack-trace">java.lang.AssertionError: expected:&lt;kamal&gt; but was:&lt;1234&gt;
+	at org.testng.AssertJUnit.assertEquals(AssertJUnit.java:101)
+	at com.FCI.SWE.Controller.UserControllerTessting.UserController(UserControllerTessting.java:19)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -168,7 +163,7 @@
         </div> <!-- panel Default_suite -->
         <div panel-name="test-xml-Default_suite" class="panel">
           <div class="main-panel-header rounded-window-top">
-            <span class="header-content">C:\Users\Abdussalam AbduHelal\AppData\Local\Temp\testng-eclipse-86820508\testng-customsuite.xml</span>
+            <span class="header-content">C:\Users\Abdussalam AbduHelal\AppData\Local\Temp\testng-eclipse-1834264\testng-customsuite.xml</span>
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <pre>
@@ -177,7 +172,7 @@
 &lt;suite name=&quot;Default suite&quot;&gt;
   &lt;test verbose=&quot;2&quot; name=&quot;Default test&quot;&gt;
     &lt;classes&gt;
-      &lt;class name=&quot;com.FCI.SWE.Services.MessageServiceTest&quot;/&gt;
+      &lt;class name=&quot;com.FCI.SWE.Controller.UserControllerTessting&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Default test --&gt;
 &lt;/suite&gt; &lt;!-- Default suite --&gt;
@@ -219,14 +214,14 @@ data.addColumn('string', 'Class');
 data.addColumn('number', 'Time (ms)');
 data.addRows(1);
 data.setCell(0, 0, 0)
-data.setCell(0, 1, 'message')
-data.setCell(0, 2, 'com.FCI.SWE.Services.MessageServiceTest')
-data.setCell(0, 3, 152);
+data.setCell(0, 1, 'UserController')
+data.setCell(0, 2, 'com.FCI.SWE.Controller.UserControllerTessting')
+data.setCell(0, 3, 2128);
 window.suiteTableData['Default_suite']= { tableData: data, tableDiv: 'times-div-Default_suite'}
 return data;
 }
               </script>
-              <span class="suite-total-time">Total running time: 152 ms</span>
+              <span class="suite-total-time">Total running time: 2 seconds</span>
               <div id="times-div-Default_suite">
               </div> <!-- times-div-Default_suite -->
             </div> <!-- times-div -->
@@ -252,11 +247,11 @@ return data;
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <div class="chronological-class">
-              <div class="chronological-class-name">com.FCI.SWE.Services.MessageServiceTest</div> <!-- chronological-class-name -->
+              <div class="chronological-class-name">com.FCI.SWE.Controller.UserControllerTessting</div> <!-- chronological-class-name -->
               <div class="test-method">
                 <img src="failed.png">
                 </img>
-                <span class="method-name">message</span>
+                <span class="method-name">UserController</span>
                 <span class="method-start">0 ms</span>
               </div> <!-- test-method -->
           </div> <!-- main-panel-content rounded-window-bottom -->

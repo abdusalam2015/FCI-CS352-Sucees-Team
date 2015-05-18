@@ -27,11 +27,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.FCI.SWE.Models.Friend;
-import com.FCI.SWE.Models.GroupMessage;
 import com.FCI.SWE.Models.KeepUserName;
-import com.FCI.SWE.Models.Message;
-import com.FCI.SWE.Models.Post;
 import com.FCI.SWE.Models.UserEntity;
 import com.FCI.SWE.Services.Service;
 import com.google.api.server.spi.BackendService.Properties;
@@ -159,27 +155,46 @@ public class UserController {
 
 		return "Failed";
 	}
-	KeepUserName userName = new KeepUserName();
-	Message message = new Message();
-	GroupMessage gMessage = new GroupMessage();
-	Post post = new Post();
-	Friend  friend = new Friend();
-	
+
 	@POST
 	@Path("/home")
 	@Produces("text/html")
 	public Response home(@FormParam("uname") String uname,
 			@FormParam("password") String pass) {
+
 		String serviceUrl = "http://localhost:8888/rest/LoginService";
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "uname=" + uname + "&password=" + pass;
-		 			JSONParser parser = new JSONParser();
-		 			ConnectionC obj1 = new ConnectionC();
-		 			String retJson = obj1.connect(urlParameters, serviceUrl);
-				Object obj = parser.parse(retJson);
-				JSONObject object = (JSONObject) obj ;
-				if (object.get("Status").equals("Failed"))
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000);
+			connection.setReadTimeout(60000);
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj ;
+			if (object.get("Status").equals("Failed"))
 				return null;
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
@@ -188,17 +203,17 @@ public class UserController {
 			ArrayList<UserEntity> list3 = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> list4 = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> list5 = new ArrayList<UserEntity>();
-			list2.addAll(friend.searchForReq(userName.getUserName()));
+			
+			KeepUserName userName = new KeepUserName();
+			list2.addAll(user.searchForReq(userName.getUserName()));
 			map.put("friends", list2);
-			list3.addAll(message.getSenderMessages(userName.getUserName()));
+			list3.addAll(user.getSenderMessages(userName.getUserName()));
 			map.put("messages", list3);
-			
-			list.addAll(gMessage.getNotificationGMSG(userName.getUserName()));
+			list.addAll(user.getNotificationGMSG(userName.getUserName()));
 			map.put("GMSG", list);
-			
-			list4.addAll(post.getPosts(userName.getUserName())); // if table is found
+			list4.addAll(user.getPosts(userName.getUserName())); // if table is found
 			map.put("post", list4);
-			list5.addAll(post.getPrivacyPosts(userName.getUserName()));
+			list5.addAll(user.getPrivacyPosts(userName.getUserName()));
 			map.put("onlyMe", list5);
 			
 			return Response.ok(new Viewable("/jsp/home", map)).build();
@@ -224,10 +239,33 @@ public class UserController {
 		String serviceUrl = "http://localhost:8888/rest/UserspageService";
 		try {
 			URL url = new URL(serviceUrl);
-			String urlParameters = "uname=" + uname + "&posts=" + posts;
-			ConnectionC obj1 = new ConnectionC();
- 			String retJson = obj1.connect(urlParameters, serviceUrl);
- 			JSONParser parser = new JSONParser();
+			String urlParameters = "uname=" + uname + "&posts=" + uname;
+			System.out.println("postHmed: " + uname);
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); 
+			connection.setReadTimeout(60000);
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
 			if (object.get("Status").equals("Failed"))
@@ -236,8 +274,7 @@ public class UserController {
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			UserEntity user = UserEntity.getUser(object.toJSONString());
 			KeepUserName n = new KeepUserName();
-			
-			friend.saveFriends(n.getUserName(), "0" );
+			user.saveFriends(n.getUserName(), "0" );
 			
 			timeLine.addAll(user.getTimeLine(uname));
 			map.put("timeline", timeLine );
@@ -269,9 +306,32 @@ public class UserController {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "groupName=" + groupName + "&memmber="
 					+ memmber + "&message=" + message;
-			ConnectionC obj1 = new ConnectionC();
- 			String retJson = obj1.connect(urlParameters, serviceUrl);
- 			JSONParser parser = new JSONParser();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); 
+			connection.setReadTimeout(60000); 
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
 			ArrayList<UserEntity> list = new ArrayList<UserEntity>();
@@ -287,7 +347,7 @@ public class UserController {
 				//map.put("GMSG", list);
 			} else {
 				 System.out.println("yyeyssys");
-				list.addAll(gMessage.getGroupMessages(username.getUserName() , groupName));
+				list.addAll(user.getGroupMessages(username.getUserName() , groupName));
 				//System.out.println("lsit "+list.get(0).getEmail());
 				map.put("GMSG", list);
 			}
@@ -310,16 +370,38 @@ public class UserController {
 	@Path("/message")
 	@Produces("text/html")
 	public Response message(@FormParam("name") String name,
-			@FormParam("message") String messages) {
+			@FormParam("message") String message) {
 
 		String serviceUrl = "http://localhost:8888/rest/MessageService";
 		try {
 
 			URL url = new URL(serviceUrl);
-			String urlParameters = "name=" + name + "&message=" + messages;
-			ConnectionC obj1 = new ConnectionC();
- 			String retJson = obj1.connect(urlParameters, serviceUrl);
- 			JSONParser parser = new JSONParser();
+			String urlParameters = "name=" + name + "&message=" + message;
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); 
+			connection.setReadTimeout(60000); 
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
 
@@ -329,10 +411,10 @@ public class UserController {
 			ArrayList<UserEntity> messageList2 = new ArrayList<UserEntity>();
 			KeepUserName u = new KeepUserName();
 			if (name == null) {
-				messageList.addAll(message.getMessages(u.getUserName()));
+				messageList.addAll(user.getMessages(u.getUserName()));
 				map.put("messages", messageList);
 			} else {
-				messageList2.addAll(message.getSpecificMessages(u.getUserName(), name));
+				messageList2.addAll(user.getSpecificMessages(u.getUserName(), name));
 				map.put("messages", messageList2);
 			}
 			
@@ -361,17 +443,42 @@ public class UserController {
 		try {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "name=" + postName + "&share=" +sharePost +"&privacy=" + privacy +"&hashTag=" + hashTag;
-			ConnectionC obj1 = new ConnectionC();
- 			String retJson = obj1.connect(urlParameters, serviceUrl);
- 			KeepUserName userName = new KeepUserName();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); // 60 Seconds
+			connection.setReadTimeout(60000); // 60 Seconds
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
+			Object obj = parser.parse(retJson);
+			JSONObject object = (JSONObject) obj;
+			 KeepUserName userName = new KeepUserName();
 			ArrayList<UserEntity> posts = new ArrayList<UserEntity>();
 			ArrayList<UserEntity> hashTagList = new ArrayList<UserEntity>();
 			UserEntity caller = new UserEntity();
-			posts.addAll(post.getPosts(userName.getUserName()));
+			posts.addAll(caller.getPosts(userName.getUserName()));
 			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
 			System.out.println("hashtag :"+hashTag);
 			if(hashTag != null){
-			hashTagList.addAll(post.getHashTag(hashTag));
+			hashTagList.addAll(caller.getHashTag(hashTag));
 			System.out.println("hashtagloop :"+hashTag);
 			map.put("hashTag", hashTagList);
 			//System.out.println(map.get(hashTag)+"  map");
@@ -387,7 +494,10 @@ public class UserController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -402,9 +512,31 @@ public class UserController {
 			URL url = new URL(serviceUrl);
 			String urlParameters = "pageName=" + pageName + "&pName" + like;
 
-			ConnectionC obj1 = new ConnectionC();
- 			String retJson = obj1.connect(urlParameters, serviceUrl);
- 			JSONParser parser = new JSONParser();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setConnectTimeout(60000); 
+			connection.setReadTimeout(60000);  
+
+			connection.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded;charset=UTF-8");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					connection.getOutputStream());
+			writer.write(urlParameters);
+			writer.flush();
+			String line, retJson = "";
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+
+			while ((line = reader.readLine()) != null) {
+				retJson += line;
+			}
+			writer.close();
+			reader.close();
+			JSONParser parser = new JSONParser();
 			Object obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj ;
 			ArrayList<UserEntity> page = new ArrayList<UserEntity>();
