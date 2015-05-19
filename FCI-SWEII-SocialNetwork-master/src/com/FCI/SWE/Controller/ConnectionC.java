@@ -11,11 +11,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-
+import com.beust.jcommander.Parameters;
+/*
+ * this class connect with database  
+ */
+@Parameters
+/*
+ * urlParameters is the database path 
+ * serviceUrl : a kind of serevice that connect with database .
+ */
 public class ConnectionC {
 	public ConnectionC(){}
 	public String  connect (String urlParameters , String serviceUrl ){
- 
 	try {
 		URL url = new URL(serviceUrl);
  

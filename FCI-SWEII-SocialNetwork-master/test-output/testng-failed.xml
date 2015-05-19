@@ -3,11 +3,11 @@
 <suite name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="com.FCI.SWE.Controller.UserControllerTessting">
+      <class name="com.FCI.SWE.Services.MessageServiceTest">
         <methods>
-          <include name="UserController"/>
+          <include name="message"/>
         </methods>
-      </class> <!-- com.FCI.SWE.Controller.UserControllerTessting -->
+      </class> <!-- com.FCI.SWE.Services.MessageServiceTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -2,20 +2,25 @@
 <testng-results skipped="0" failed="1" total="1" passed="0">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="2151" started-at="2015-05-10T20:42:38Z" finished-at="2015-05-10T20:42:40Z">
+  <suite name="Default suite" duration-ms="165" started-at="2015-05-18T07:46:03Z" finished-at="2015-05-18T07:46:03Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="2151" started-at="2015-05-10T20:42:38Z" finished-at="2015-05-10T20:42:40Z">
-      <class name="com.FCI.SWE.Controller.UserControllerTessting">
-        <test-method status="FAIL" signature="UserController()[pri:0, instance:com.FCI.SWE.Controller.UserControllerTessting@1ebd2621]" name="UserController" duration-ms="2128" started-at="2015-05-10T22:42:38Z" finished-at="2015-05-10T22:42:40Z">
-          <exception class="java.lang.AssertionError">
+    <test name="Default test" duration-ms="165" started-at="2015-05-18T07:46:03Z" finished-at="2015-05-18T07:46:03Z">
+      <class name="com.FCI.SWE.Services.MessageServiceTest">
+        <test-method status="FAIL" signature="message()[pri:0, instance:com.FCI.SWE.Services.MessageServiceTest@7e6c7407]" name="message" duration-ms="152" started-at="2015-05-18T09:46:03Z" finished-at="2015-05-18T09:46:03Z">
+          <exception class="java.lang.NullPointerException">
             <message>
-              <![CDATA[expected:<kamal> but was:<1234>]]>
+              <![CDATA[No API environment is registered for this thread.]]>
             </message>
             <full-stacktrace>
-              <![CDATA[java.lang.AssertionError: expected:<kamal> but was:<1234>
-	at org.testng.AssertJUnit.assertEquals(AssertJUnit.java:101)
-	at com.FCI.SWE.Controller.UserControllerTessting.UserController(UserControllerTessting.java:19)
+              <![CDATA[java.lang.NullPointerException: No API environment is registered for this thread.
+	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppId(DatastoreApiHelper.java:117)
+	at com.google.appengine.api.datastore.DatastoreApiHelper.getCurrentAppIdNamespace(DatastoreApiHelper.java:133)
+	at com.google.appengine.api.datastore.Query.<init>(Query.java:215)
+	at com.google.appengine.api.datastore.Query.<init>(Query.java:144)
+	at com.FCI.SWE.Models.UserEntity.getUserOnly(UserEntity.java:141)
+	at com.FCI.SWE.Services.MessageService.message(MessageService.java:22)
+	at com.FCI.SWE.Services.MessageServiceTest.message(MessageServiceTest.java:9)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -42,11 +47,11 @@
 	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:175)
 ]]>
             </full-stacktrace>
-          </exception> <!-- java.lang.AssertionError -->
+          </exception> <!-- java.lang.NullPointerException -->
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- UserController -->
-      </class> <!-- com.FCI.SWE.Controller.UserControllerTessting -->
+        </test-method> <!-- message -->
+      </class> <!-- com.FCI.SWE.Services.MessageServiceTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

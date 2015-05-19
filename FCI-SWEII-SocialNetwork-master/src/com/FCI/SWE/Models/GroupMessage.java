@@ -12,6 +12,12 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class GroupMessage implements User{
+	
+	/*
+	 * @param userName : a person who member in  a group 
+	 * @param gName : group name ;
+	 * @return All messages that related by this group .
+	 */
 	public ArrayList<UserEntity> getGroupMessages(String userName , String gName ) {
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -75,7 +81,10 @@ public class GroupMessage implements User{
 
 		return messageList;
 	}
-
+/**
+ * @param userName is a user name that is a member in the group(s)
+ * @return list of notifications that related by messages that send to this group with counter of messages ;
+ */
 	public   ArrayList<UserEntity> getNotificationGMSG(String userName) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -116,7 +125,13 @@ public class GroupMessage implements User{
 		}
 		return newConversationList;
 	}
-
+/**
+ * @param name : group name  
+ * @param member : this attribute will be null if you in create group  of when send message
+ * and not be null when add member .
+ * @param message : body of message that will be send to  name of group
+ * @return true if the group is created successfully 
+ */
 	public Boolean createGroupMessage(String name, String memmber,
 			String message) {
 
@@ -138,6 +153,10 @@ public class GroupMessage implements User{
 
 		return true;
 	}
+	/**
+	 * @param name: user name 
+	 * @return user name if is member in group 
+	 */
 	public   UserEntity getGroupName(String name) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory

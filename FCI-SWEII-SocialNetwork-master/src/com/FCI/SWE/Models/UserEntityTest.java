@@ -33,24 +33,24 @@ public class UserEntityTest {
 			@DataProvider(name="even")
 			public static Object[][]getUserOnly (){
 				return new Object[][]{{2 , true},{3,false} , {-3 ,false }, {5 ,false }};
-			}*/
-			
+			}*/	
 @Test
   public void userEntityTest(){
-	
+	Page page = new Page();
 	UserEntity u = UserEntity.getUserOnly("abdussalam");
 	AssertJUnit.assertEquals(u.name,"abdussalam" );
-	
-	  u = UserEntity.getGroupName("ISLAM");
+	GroupMessage gMessage = new GroupMessage();
+	  u = gMessage.getGroupName("ISLAM");
+	  Friend friend = new Friend();
 	AssertJUnit.assertEquals(u.name,"ISLAM" );
 	
-	  String friends = UserEntity.getFriends("abdussalam");
+	  String friends = friend.getFriends("abdussalam");
 		AssertJUnit.assertEquals(friends,"kamal hamed islam" );
 		
-		  u = UserEntity.getpage("FCI");
+		  u = page.getpage("FCI");
 			AssertJUnit.assertEquals(u.name,"FCI" );
 			
-			 ArrayList<UserEntity> messages = UserEntity.getGroupMessages("abdussalam", "hamed");
+			 ArrayList<UserEntity> messages = gMessage.getGroupMessages("abdussalam", "hamed");
 				AssertJUnit.assertEquals(messages,"{hello abdussalam , hamed}" );
 		
 	

@@ -9,6 +9,12 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class Friend {
+	
+	/**
+	 * 
+	 * @param userName
+	 * @return all userName Friends from database 
+	 */
 	public static String getFriends(String userName) {// AA
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -29,6 +35,11 @@ public class Friend {
 		}
 		return friends;
 	}
+	/**
+	 * 
+	 * @param name
+	 * @return a list of all requests that not be accepted from username : name
+	 */
 	public static ArrayList<UserEntity> searchForReq(String name) {
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -53,6 +64,13 @@ public class Friend {
 		}
 		return requestList;
 	}
+	/**
+	 * 
+	 * @param reqName person that  friend request from uname  
+	 * @param flag  : flage = 1 if is accept , flage = 0 if is not accepted
+	 * @param uname person who recive friend request
+	 * @return true if the recive in database .
+	 */
 	public Boolean saveUser2(String reqName, String flag , String uname) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();

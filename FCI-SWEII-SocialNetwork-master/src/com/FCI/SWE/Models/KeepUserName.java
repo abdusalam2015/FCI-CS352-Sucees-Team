@@ -17,18 +17,25 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+/**
+ * 
+ * @class  KeepUserName 
+ *  class that keep username from begin to end 
+ */
 public class KeepUserName {
+	
 	public KeepUserName(){
 		
 	}
 	public static String userName ; 
-	public KeepUserName(String name){
-	 
+	private  KeepUserName(String name){
 		userName  = name ; 
-		
 	}
 	public static String   getUserName(){
 		return userName ; 
+	}
+	public   void   setUserName(String userName){
+		 this.userName = userName ;
 	}
 	
 

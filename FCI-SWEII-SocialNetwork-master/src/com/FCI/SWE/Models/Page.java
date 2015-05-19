@@ -7,7 +7,12 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class Page {
-
+/**
+ * 
+ * @param pageName
+ * @param like
+ * @return true if the page  stored in database 
+ */
 	public Boolean savePage(String pageName, String like) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -20,6 +25,11 @@ public class Page {
 		datastore.put(employee);
 		return true;
 	}	
+	/**
+	 * 
+	 * @param pageName
+	 * @return pageName if it's found in database else return null 
+	 */
 	public static UserEntity getpage(String pageName) {
 
 		DatastoreService datastore = DatastoreServiceFactory

@@ -9,6 +9,14 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class Post {
+	/**
+	 * 
+	 * @param name : user who write this post 
+	 * @param post : body of post
+	 * @param privacy : privacy equal (1) if it's else (0)
+	 * @param pub : public post if it's value = 1 else = 0 
+	 * @return true when it's stor in database correctly 
+	 */
 	public Boolean writePost(String name, String post , String privacy , String pub) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -23,6 +31,11 @@ public class Post {
 		datastore.put(employee);
 		return true;
 	}
+	/**
+	 * 
+	 * @param uname : user name 
+	 * @return all posts that you and your friend are  write    
+	 */
 	public static ArrayList<UserEntity> getPosts(String uname) {
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -48,6 +61,11 @@ public class Post {
 		}
 		return posts;
 	}
+	/**
+	 * 
+	 * @param hashTagName
+	 * @return all hash tags that same name 
+	 */
 	public static ArrayList<UserEntity> getHashTag(String hashTagName) {
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -73,7 +91,11 @@ public class Post {
 		return hashTagList;
 	}
 
-
+/**
+ * 
+ * @param uname : user Name
+ * @return get all post that it's privacy only 
+ */
 	
 	public static ArrayList<UserEntity> getPrivacyPosts(String uname) {
 
@@ -98,6 +120,13 @@ public class Post {
 		
 		return privacyPosts;
 	}
+	/**
+	 * 
+	 * @param uname : userName 
+	 * @param hashtage : hash tag name 
+	 * @param post that has #hashtage
+	 * @return true when the post store in hashtage table in database 
+	 */
 	public Boolean writeHashTag(String uname, String hashtage, String post) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();

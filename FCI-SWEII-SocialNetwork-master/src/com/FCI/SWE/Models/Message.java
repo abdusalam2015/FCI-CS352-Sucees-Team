@@ -12,6 +12,11 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class Message {
+	/**
+	 * 
+	 * @param userName
+	 * @return All messages that related by this userName 
+	 */
 		public static ArrayList<UserEntity> getMessages(String userName) {// AA
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -30,6 +35,12 @@ public class Message {
 		}
 		return messageList;
 	}
+		/**
+		 * 
+		 * @param userName 
+		 * @param name : person who get it's messages 
+		 * @return all message that related by a specific name and user name only 
+		 */
 		public static ArrayList<UserEntity> getSpecificMessages(String userName,
 				String name) {// AA
 
